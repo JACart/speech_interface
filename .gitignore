@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+deepspeech*
+Jac_Speech_Venv
