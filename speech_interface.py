@@ -42,8 +42,9 @@ def main(ARGS):
             logging.debug("end utterence")
             text = stream_context.finishStream()
             print(text)
-            engine.say(text)
-            engine.runAndWait()
+            if(len(text) > 0):
+                engine.say(text)
+                engine.runAndWait()
             if("stop" in text):
                 break
             stream_context = model.createStream()
