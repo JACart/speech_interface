@@ -3,6 +3,7 @@ import os
 import logging
 import numpy as np
 import deepspeech
+import pyttsx3
 
 
 def main(ARGS):
@@ -31,6 +32,8 @@ def main(ARGS):
     # Stream from microphone to DeepSpeech using VAD
     stream_context = model.createStream()
     wav_data = bytearray()
+    engine = pyttsx3.init()
+
     for frame in frames:
         if frame is not None:
             logging.debug("streaming frame")
@@ -39,6 +42,8 @@ def main(ARGS):
             logging.debug("end utterence")
             text = stream_context.finishStream()
             print(text)
+            engine.say(text)
+            engine.runAndWait()
             if("stop" in text):
                 break
             stream_context = model.createStream()
