@@ -49,7 +49,10 @@ def main(ARGS):
         else:
             logging.debug("end utterence")
             text = stream_context.finishStream()
-            sock.sendall(text.encode())
+            if(not sock._closed)
+                sock.sendall(text.encode())
+            else:
+                break
             stream_context = model.createStream()
     sock.close()
 
