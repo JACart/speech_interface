@@ -3,9 +3,9 @@ from mic_vad_streaming import VADAudio
 import os
 import logging
 import numpy as np
-import datetime as datetime
 import deepspeech
-from halo import Halo
+import threading
+import pyttsx3
 
 def open_socket():
     sock = socket.socket()         # Create a socket object
@@ -14,9 +14,20 @@ def open_socket():
     sock.connect((host, port))
     return sock
 
-def main(ARGS):
+def recieve(socket, engine):
+    while(socket.fileno() != -1):
+        text = socket.recv(2048)
+        if(text == 'garbonzo'.decode()):
+            socket.close()
+        elif(len(text > 0)):
+            engine.say(text.decode())
+            engine.runAndWait()
 
+def main(ARGS):
+    engine = pyttsx3.init()
     sock = open_socket()
+    reciever = threading.Thread(target=recieve, args=(sock, engine))
+    reciever.start()
 
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
@@ -49,12 +60,13 @@ def main(ARGS):
         else:
             logging.debug("end utterence")
             text = stream_context.finishStream()
-            if(not sock._closed)
+            if(sock.fileno() != -1):
                 sock.sendall(text.encode())
             else:
                 break
             stream_context = model.createStream()
     sock.close()
+    recieve.join()
 
 if __name__ == '__main__':
     DEFAULT_SAMPLE_RATE = 16000

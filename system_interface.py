@@ -14,10 +14,10 @@ print('Got connection from: {}', addr)
 
 def whisper(data):
    try:
-      c.sendall(dat)
-   except e:
+      c.sendall(data)
+   except:
       c.close()
-      print(e)
+      print("exception occured probably Broken Pipe")
 
 class sys_interface(object):
    def __init__(self):
