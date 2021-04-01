@@ -1,12 +1,22 @@
+import socket             # Import socket module
 from mic_vad_streaming import VADAudio
 import os
 import logging
 import numpy as np
+import datetime as datetime
 import deepspeech
-import pyttsx3
+from halo import Halo
 
+def open_socket():
+    sock = socket.socket()         # Create a socket object
+    host = '127.0.0.1' # Get local machine name
+    port = 2500             # Reserve a port for your service.
+    sock.connect((host, port))
+    return sock
 
 def main(ARGS):
+
+    sock = open_socket()
 
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
@@ -32,8 +42,6 @@ def main(ARGS):
     # Stream from microphone to DeepSpeech using VAD
     stream_context = model.createStream()
     wav_data = bytearray()
-    engine = pyttsx3.init()
-
     for frame in frames:
         if frame is not None:
             logging.debug("streaming frame")
@@ -41,13 +49,9 @@ def main(ARGS):
         else:
             logging.debug("end utterence")
             text = stream_context.finishStream()
-            print(text)
-            if(len(text) > 0):
-                engine.say(text)
-                engine.runAndWait()
-            if("stop" in text):
-                break
+            sock.sendall(text.encode())
             stream_context = model.createStream()
+    sock.close()
 
 if __name__ == '__main__':
     DEFAULT_SAMPLE_RATE = 16000
