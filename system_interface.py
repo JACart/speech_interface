@@ -18,7 +18,7 @@ def whisper(data):
    # except:
    #    c.close()
    #    print("exception occured probably Broken Pipe")
-   c.sendall(data.encode())
+   c.send(str(data))
 
 class sys_interface(object):
    def __init__(self):
@@ -40,6 +40,6 @@ while True:
    print("Data: %s" %text.decode())
    anouncer.anounce(text.decode())
    if("halt" in text.decode()):
-      c.send('the close keyword is intentionally long so no one accidentally says it garbonzo beans'.encode())
+      c.send('garbonzo'.encode())
       c.close()                # Close the connection
       break
