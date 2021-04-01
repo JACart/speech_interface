@@ -3,7 +3,6 @@
 import socket
 import rospy
 from std_msgs.msg import Int8, String, Bool
-from navigation_msgs import VehicleState, Stop
 
 host = ''
 port = 2500
@@ -17,7 +16,6 @@ class sys_interface(object):
    def __init__(self):
         rospy.init_node('speech_detector')
         self.speech_text = rospy.Publisher('/speech_text', String, queue_size=10)
-        self.stop_cart = rospy.Publisher('/stop', Stop, queue_size=10)
         cart_stopped = False
    
    def anounce(self, text):
