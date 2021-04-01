@@ -17,11 +17,12 @@ def open_socket():
 def recieve(socket, engine):
     while(socket.fileno() != -1):
         text = socket.recv(2048)
-        if(text == 'garbonzo'.decode()):
-            socket.close()
-        elif(len(text > 0)):
-            engine.say(text.decode())
-            engine.runAndWait()
+        if(len(text > 0)):
+            if(text == 'garbonzo'.decode()):
+                socket.close()
+            else:
+                engine.say(text.decode())
+                engine.runAndWait()
 
 def main(ARGS):
     engine = pyttsx3.init()

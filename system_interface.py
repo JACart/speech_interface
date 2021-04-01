@@ -13,11 +13,12 @@ c, addr = sock.accept()     # Establish connection with client.
 print('Got connection from: {}', addr)
 
 def whisper(data):
-   try:
-      c.sendall(data)
-   except:
-      c.close()
-      print("exception occured probably Broken Pipe")
+   # try:
+   #    c.sendall(data)
+   # except:
+   #    c.close()
+   #    print("exception occured probably Broken Pipe")
+   c.sendall(data.encode())
 
 class sys_interface(object):
    def __init__(self):
