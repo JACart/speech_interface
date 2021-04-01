@@ -18,6 +18,7 @@ def whisper(data):
    # except:
    #    c.close()
    #    print("exception occured probably Broken Pipe")
+   print(str(data))
    c.send(str(data))
    print(c.fileno())
 

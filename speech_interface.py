@@ -17,15 +17,14 @@ def open_socket():
 def recieve(socket, engine):
     while(socket.fileno() != -1):
         text = socket.recv(2048)
-        print("text.decode()")
+        print("while loop in recieve keeps going")
         if(len(text) > 0):
-            # if(text.decode() == 'garbonzo'):
-            #     print("closing socket")
-            #     socket.close()
-            # else:
-                # engine.say(text.decode())
-                # engine.runAndWait()
-            print(socket.fileno())
+            if(text.decode() == 'garbonzo'):
+                print("closing socket")
+                socket.close()
+            else:
+                engine.say(text.decode())
+                engine.runAndWait()
 
 def send_voice(socekt):
     # Load DeepSpeech model
@@ -70,9 +69,12 @@ def main(ARGS):
     engine = pyttsx3.init()
     sock = open_socket()
     reciever = threading.Thread(target=recieve, args=(sock, engine))
+    sender = threading.Thread(target=send_voice, args=(sock, ))
+
+    sender.start()
     reciever.start()
 
-    sock.close()
+    sender.join()
     reciever.join()
 
 if __name__ == '__main__':
