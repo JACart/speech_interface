@@ -19,6 +19,7 @@ def whisper(data):
    #    c.close()
    #    print("exception occured probably Broken Pipe")
    c.send(str(data))
+   print(c.fileno())
 
 class sys_interface(object):
    def __init__(self):
@@ -28,7 +29,7 @@ class sys_interface(object):
         cart_stopped = False
    
    def anounce(self, text):
-      print("Publishing")
+      # print("Publishing")
       self.speech_text.publish(text)
 
 anouncer = sys_interface()
@@ -37,7 +38,7 @@ while True:
    text = c.recv(2048)
    fo = open("Log.txt", "w")
    fo.write(text.decode())
-   print("Data: %s" %text.decode())
+   # print("Data: %s" %text.decode())
    anouncer.anounce(text.decode())
    if("halt" in text.decode()):
       c.send('garbonzo'.encode())

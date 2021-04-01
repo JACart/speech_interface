@@ -17,20 +17,17 @@ def open_socket():
 def recieve(socket, engine):
     while(socket.fileno() != -1):
         text = socket.recv(2048)
+        print("text.decode()")
         if(len(text) > 0):
-            if(text == 'garbonzo'):
-                print("closing socket")
-                socket.close()
-            else:
-                engine.say(text.decode())
-                engine.runAndWait()
+            # if(text.decode() == 'garbonzo'):
+            #     print("closing socket")
+            #     socket.close()
+            # else:
+                # engine.say(text.decode())
+                # engine.runAndWait()
+            print(socket.fileno())
 
-def main(ARGS):
-    engine = pyttsx3.init()
-    sock = open_socket()
-    reciever = threading.Thread(target=recieve, args=(sock, engine))
-    reciever.start()
-
+def send_voice(socekt):
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
         model_dir = ARGS.model
@@ -54,7 +51,7 @@ def main(ARGS):
 
     # Stream from microphone to DeepSpeech using VAD
     stream_context = model.createStream()
-    wav_data = bytearray()
+    print("hello")
     for frame in frames:
         if frame is not None:
             logging.debug("streaming frame")
@@ -63,12 +60,20 @@ def main(ARGS):
             logging.debug("end utterence")
             text = stream_context.finishStream()
             if(sock.fileno() != -1):
+                print("here")
                 sock.sendall(text.encode())
             else:
                 break
             stream_context = model.createStream()
+
+def main(ARGS):
+    engine = pyttsx3.init()
+    sock = open_socket()
+    reciever = threading.Thread(target=recieve, args=(sock, engine))
+    reciever.start()
+
     sock.close()
-    recieve.join()
+    reciever.join()
 
 if __name__ == '__main__':
     DEFAULT_SAMPLE_RATE = 16000
