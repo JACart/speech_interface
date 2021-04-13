@@ -6,6 +6,9 @@ import numpy as np
 import deepspeech
 import threading
 import pyttsx3
+from halo import Halo
+
+socket_open = True
 
 def open_socket():
     sock = socket.socket()         # Create a socket object
@@ -15,18 +18,24 @@ def open_socket():
     return sock
 
 def recieve(socket, engine):
-    while(socket.fileno() != -1):
+    text = "Hello World"
+    while(len(text) > 0):
         text = socket.recv(2048)
         print("while loop in recieve keeps going")
+        print(socket.fileno())
         if(len(text) > 0):
-            if(text.decode() == 'garbonzo'):
+            if('garbonzo' in text.decode()):
                 print("closing socket")
                 socket.close()
+                socket_open = False
+                break
             else:
                 engine.say(text.decode())
                 engine.runAndWait()
 
-def send_voice(socekt):
+def send_voice():
+    socket = open_socket()
+
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
         model_dir = ARGS.model
@@ -49,33 +58,40 @@ def send_voice(socekt):
     frames = vad_audio.vad_collector()
 
     # Stream from microphone to DeepSpeech using VAD
+    spinner = None
+    if not ARGS.nospinner:
+        spinner = Halo(spinner='line')
     stream_context = model.createStream()
-    print("hello")
+    wav_data = bytearray()
     for frame in frames:
         if frame is not None:
+            if spinner: spinner.start()
             logging.debug("streaming frame")
             stream_context.feedAudioContent(np.frombuffer(frame, np.int16))
+            if ARGS.savewav: wav_data.extend(frame)
         else:
+            if spinner: spinner.stop()
             logging.debug("end utterence")
+            if ARGS.savewav:
+                vad_audio.write_wav(os.path.join(ARGS.savewav, datetime.now().strftime("savewav_%Y-%m-%d_%H-%M-%S_%f.wav")), wav_data)
+                wav_data = bytearray()
             text = stream_context.finishStream()
-            if(sock.fileno() != -1):
-                print("here")
-                sock.sendall(text.encode())
-            else:
-                break
+            print("Recognized: %s" % text)
+            socket.send(text.encode())
             stream_context = model.createStream()
 
 def main(ARGS):
     engine = pyttsx3.init()
-    sock = open_socket()
-    reciever = threading.Thread(target=recieve, args=(sock, engine))
-    sender = threading.Thread(target=send_voice, args=(sock, ))
+    send_voice()
+    # # reciever = threading.Thread(target=recieve, args=(sock, engine))
+    # sender = threading.Thread(target=send_voice, args=(sock, ))
 
-    sender.start()
-    reciever.start()
+    # sender.start()
+    # # reciever.start()
 
-    sender.join()
-    reciever.join()
+    # # reciever.join()
+    # sender.join()
+  
 
 if __name__ == '__main__':
     DEFAULT_SAMPLE_RATE = 16000
@@ -85,8 +101,13 @@ if __name__ == '__main__':
 
     parser.add_argument('-v', '--vad_aggressiveness', type=int, default=3,
                         help="Set aggressiveness of VAD: an integer between 0 and 3, 0 being the least aggressive about filtering out non-speech, 3 the most aggressive. Default: 3")
+    parser.add_argument('--nospinner', action='store_true',
+                        help="Disable spinner")
+    parser.add_argument('-w', '--savewav',
+                        help="Save .wav files of utterences to given directory")
     parser.add_argument('-f', '--file',
                         help="Read from .wav file instead of microphone")
+
     parser.add_argument('-m', '--model', required=True,
                         help="Path to the model (protocol buffer binary file, or entire directory containing all standard-named files for model)")
     parser.add_argument('-s', '--scorer',

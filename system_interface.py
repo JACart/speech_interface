@@ -13,14 +13,14 @@ c, addr = sock.accept()     # Establish connection with client.
 print('Got connection from: {}', addr)
 
 def whisper(data):
-   # try:
-   #    c.sendall(data)
-   # except:
-   #    c.close()
-   #    print("exception occured probably Broken Pipe")
-   print(str(data))
-   c.send(str(data))
-   print(c.fileno())
+   try:
+      print(str(data))
+      c.send(str(data))
+      print(c.fileno())
+   except:
+      c.close()
+      print("exception occured probably Broken Pipe")
+
 
 class sys_interface(object):
    def __init__(self):
@@ -37,11 +37,12 @@ anouncer = sys_interface()
 
 while True:
    text = c.recv(2048)
-   fo = open("Log.txt", "w")
-   fo.write(text.decode())
-   # print("Data: %s" %text.decode())
-   anouncer.anounce(text.decode())
-   if("halt" in text.decode()):
-      c.send('garbonzo'.encode())
-      c.close()                # Close the connection
-      break
+   if(len(text.decode()) > 0):
+      fo = open("Log.txt", "w")
+      fo.write(text.decode())
+      print("Data: %s" %text.decode())
+      anouncer.anounce(text.decode())
+      if("halt" in text.decode()):
+         c.send('garbonzo'.encode())
+         c.close()                # Close the connection
+         break
