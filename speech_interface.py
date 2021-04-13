@@ -8,16 +8,14 @@ import threading
 import pyttsx3
 from halo import Halo
 
-socket_open = True
-
-def open_socket():
+def open_socket(port):
     sock = socket.socket()         # Create a socket object
     host = '127.0.0.1' # Get local machine name
-    port = 2500             # Reserve a port for your service.
     sock.connect((host, port))
     return sock
 
-def recieve(socket, engine):
+def recieve(engine):
+    socket = open_socket(2501)
     text = "Hello World"
     while(len(text) > 0):
         text = socket.recv(2048)
@@ -27,14 +25,13 @@ def recieve(socket, engine):
             if('garbonzo' in text.decode()):
                 print("closing socket")
                 socket.close()
-                socket_open = False
                 break
             else:
                 engine.say(text.decode())
                 engine.runAndWait()
 
 def send_voice():
-    socket = open_socket()
+    socket = open_socket(2500)
 
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
@@ -79,15 +76,18 @@ def send_voice():
             print("Recognized: %s" % text)
             socket.send(text.encode())
             stream_context = model.createStream()
+            if("halt" in text):
+                socket.close()
+                break
 
 def main(ARGS):
     engine = pyttsx3.init()
 
-    # reciever = threading.Thread(target=recieve, args=(sock, engine))
+    reciever = threading.Thread(target=recieve, args=(engine, ))
     sender = threading.Thread(target=send_voice)
 
     sender.start()
-    # # reciever.start()
+    reciever.start()
 
     # # reciever.join()
     # sender.join()

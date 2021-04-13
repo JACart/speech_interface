@@ -12,13 +12,21 @@ sock.listen(1)
 c, addr = sock.accept()     # Establish connection with client.
 print('Got connection from: {}', addr)
 
+port = 2501
+whisper_sock = socket.socket()
+whisper_sock.bind((host, port))
+whisper_sock.listen(1)
+whisper_c, whisper_addr = whisper_sock.accept()
+print('Got connection from: {}', whisper_addr)
+
+
 def whisper(data):
    try:
       print(str(data))
-      c.send(str(data))
-      print(c.fileno())
+      whisper_c.send(str(data))
+      print(whisper_c.fileno())
    except:
-      c.close()
+      whisper_c.close()
       print("exception occured probably Broken Pipe")
 
 
