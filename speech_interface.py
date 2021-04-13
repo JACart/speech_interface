@@ -19,15 +19,14 @@ def recieve(engine):
     text = "Hello World"
     while(len(text) > 0):
         text = socket.recv(2048)
-        print("while loop in recieve keeps going")
-        print(socket.fileno())
         if(len(text) > 0):
             if('garbonzo' in text.decode()):
                 print("closing socket")
                 socket.close()
                 break
             else:
-                engine.say(text.decode())
+                lines = text.decode()
+                engine.say(lines[5:])
                 engine.runAndWait()
 
 def send_voice():
