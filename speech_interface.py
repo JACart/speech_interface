@@ -89,8 +89,8 @@ def main(ARGS):
     sender.start()
     reciever.start()
 
-    # # reciever.join()
-    # sender.join()
+    reciever.join()
+    sender.join()
   
 
 if __name__ == '__main__':

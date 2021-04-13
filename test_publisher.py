@@ -5,7 +5,7 @@ def talker():
     pub = rospy.Publisher('/text_speech', String, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
-    pub.publish("garbonzo")
+    pub.publish("testing")
     rate.sleep()
 
 if __name__ == '__main__':
