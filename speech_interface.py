@@ -82,11 +82,11 @@ def send_voice():
 
 def main(ARGS):
     engine = pyttsx3.init()
-    send_voice()
-    # # reciever = threading.Thread(target=recieve, args=(sock, engine))
-    # sender = threading.Thread(target=send_voice, args=(sock, ))
 
-    # sender.start()
+    # reciever = threading.Thread(target=recieve, args=(sock, engine))
+    sender = threading.Thread(target=send_voice)
+
+    sender.start()
     # # reciever.start()
 
     # # reciever.join()

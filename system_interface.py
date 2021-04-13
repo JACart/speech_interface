@@ -46,3 +46,6 @@ while True:
          c.send('garbonzo'.encode())
          c.close()                # Close the connection
          break
+   else:
+      c.close()
+      break
