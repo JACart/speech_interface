@@ -81,6 +81,9 @@ def send_voice():
 
 def main(ARGS):
     engine = pyttsx3.init()
+    rate = engine.getProperty('rate')
+    engine.setProperty('rate', rate-50)
+    engine.setProperty('voice', 'english-us') #Voice 16 is us english
 
     reciever = threading.Thread(target=recieve, args=(engine, ))
     sender = threading.Thread(target=send_voice)

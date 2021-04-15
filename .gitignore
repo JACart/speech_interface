@@ -131,3 +131,4 @@ dmypy.json
 deepspeech*
 Jac_Speech_Venv
 Log.txt
+voice_tester.py
