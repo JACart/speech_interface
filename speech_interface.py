@@ -15,22 +15,27 @@ def open_socket(port):
     return sock
 
 def recieve(engine):
-    socket = open_socket(2501)
+    socket = open_socket(3011)
     text = "Hello World"
-    while(len(text) > 0):
-        text = socket.recv(2048)
-        if(len(text) > 0):
-            if('garbonzo' in text.decode()):
-                print("closing socket")
-                socket.close()
+    try:
+        while(len(text) > 0):
+            text = socket.recv(2048)
+            if not text:
                 break
-            else:
-                lines = text.decode()
-                engine.say(lines[5:])
-                engine.runAndWait()
+            if(len(text) > 0):
+                if('garbonzo' in text.decode()):
+                    print("closing socket")
+                    socket.close()
+                    break
+                else:
+                    lines = text.decode()
+                    engine.say(lines[5:])
+                    engine.runAndWait()
+    finally:
+        socket.close()
 
 def send_voice():
-    socket = open_socket(2500)
+    socket = open_socket(3010)
 
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
@@ -78,11 +83,12 @@ def send_voice():
             if("halt" in text):
                 socket.close()
                 break
+    socket.close()
 
 def main(ARGS):
     engine = pyttsx3.init()
     rate = engine.getProperty('rate')
-    engine.setProperty('rate', rate-50)
+    engine.setProperty('rate', rate-20)
     engine.setProperty('voice', 'english-us') #Voice 16 is us english
 
     reciever = threading.Thread(target=recieve, args=(engine, ))
