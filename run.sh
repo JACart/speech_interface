@@ -2,7 +2,7 @@
 gnome-terminal --tab -- bash -c 'python system_interface.py'
 sleep 2
 echo "system interface up"
-gnome-terminal --tab -- bash -c 'exec -a speech_interface python3 speech_interface.py -m deepspeech-0.9.3-models.pbmm'
+gnome-terminal --tab -- bash -c 'exec -a speech_interface python3 speech_interface.py -m deepspeech-0.9.3-models.pbmm -v 1 -s deepspeech-0.9.3-models.scorer'
 sleep 2
 echo "speech_interface up"
 speech_pid=$(pidof speech_interface)
