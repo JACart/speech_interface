@@ -15,7 +15,7 @@ def open_socket(port):
     return sock
 
 def recieve(engine):
-    socket = open_socket(3011)
+    socket = open_socket(4343)
     text = "Hello World"
     try:
         while(len(text) > 0):
@@ -35,7 +35,7 @@ def recieve(engine):
         socket.close()
 
 def send_voice():
-    socket = open_socket(3010)
+    socket = open_socket(4445)
 
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):

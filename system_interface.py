@@ -4,14 +4,14 @@ import socket
 import rospy
 from std_msgs.msg import Int8, String, Bool
 host = ''
-port = 3010
+port = 4445
 sock = socket.socket()
 sock.bind((host, port))
 sock.listen(1)
 c, addr = sock.accept()     # Establish connection with client.
 print('Got connection from: {}', addr)
 
-port = 3011
+port = 4343
 whisper_sock = socket.socket()
 whisper_sock.bind((host, port))
 whisper_sock.listen(1)
