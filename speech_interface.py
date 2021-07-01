@@ -7,6 +7,7 @@ import deepspeech
 import threading
 import pyttsx3
 from halo import Halo
+import subprocess
 
 def open_socket(port):
     sock = socket.socket()         # Create a socket object
@@ -15,7 +16,16 @@ def open_socket(port):
     return sock
 
 def recieve(engine):
-    socket = open_socket(4343)
+    while True:
+        try:
+            print("trying socket 4343")
+            socket = open_socket(4343)
+        except Exception as e:
+            print(e)
+            print("connection refused. Most likely busy port. Retrying.")
+            continue
+        break
+        
     text = "Hello World"
     try:
         while(len(text) > 0):
