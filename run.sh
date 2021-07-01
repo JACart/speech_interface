@@ -1,4 +1,6 @@
 #!/bin/bash
+kill $(sudo lsof -t -i:4445)
+kill $(sudo lsof -t -i:4343)
 gnome-terminal --tab -- bash -c 'python system_interface.py'
 sleep 2
 echo "system interface up"
