@@ -9,6 +9,10 @@ import pyttsx3
 from halo import Halo
 import subprocess
 from time import sleep
+import socketio
+
+sio = socketio.Client()
+
 
 def open_socket(port):
     sock = socket.socket()         # Create a socket object
@@ -95,20 +99,34 @@ def send_voice():
                 break
     socket.close()
 
+
+@sio.event(namespace="/speech")
+def speech(sid, data):
+    emit()
+    lines = text.decode()
+    engine.say(lines)
+    engine.runAndWait()
+
+def emit():
+    sio.emit('speech', {"data": 'what we hear'}, namespace='/speech')
+
 def main(ARGS):
     engine = pyttsx3.init()
     rate = engine.getProperty('rate')
     engine.setProperty('rate', rate-20)
     engine.setProperty('voice', 'english-us') #Voice 16 is us english
 
-    reciever = threading.Thread(target=recieve, args=(engine, ))
-    sender = threading.Thread(target=send_voice)
+    # reciever = threading.Thread(target=recieve, args=(engine, ))
+    # sender = threading.Thread(target=send_voice)
 
-    sender.start()
-    reciever.start()
+    # sender.start()
+    # reciever.start()
 
-    reciever.join()
-    sender.join()
+    # reciever.join()
+    # sender.join()
+
+    sio.connect("http://localhost:8021/")
+
   
 
 if __name__ == '__main__':
