@@ -3,20 +3,35 @@
 import socket
 import rospy
 from std_msgs.msg import Int8, String, Bool
+import subprocess
+
+subprocess.call("./kill_ports.sh")
+
 host = ''
 port = 4445
 sock = socket.socket()
 sock.bind((host, port))
+
+# while True:
+#    try:
+#       sock.bind((host, port))
+#    except Exception as e:
+#       print(e)
+#       print("connection refused. Most likely busy port.")
+#       subprocess.call("./kill_ports.sh")
+#       continue
+#    break
+
 sock.listen(1)
 c, addr = sock.accept()     # Establish connection with client.
-print('Got connection from: {}', addr)
+print('Got connection from: {} on {}'.format(addr, port))
 
 port = 4343
 whisper_sock = socket.socket()
 whisper_sock.bind((host, port))
 whisper_sock.listen(1)
 whisper_c, whisper_addr = whisper_sock.accept()
-print('Got connection from: {}', whisper_addr)
+print('Got connection from: {} on {}'.format(whisper_addr, port))
 
 # Sends data 
 def whisper(data):

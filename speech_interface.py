@@ -8,6 +8,7 @@ import threading
 import pyttsx3
 from halo import Halo
 import subprocess
+from time import sleep
 
 def open_socket(port):
     sock = socket.socket()         # Create a socket object
@@ -16,15 +17,12 @@ def open_socket(port):
     return sock
 
 def recieve(engine):
-    while True:
-        try:
-            print("trying socket 4343")
-            socket = open_socket(4343)
-        except Exception as e:
-            print(e)
-            print("connection refused. Most likely busy port. Retrying.")
-            continue
-        break
+    sleep(3)
+    try:
+        socket = open_socket(4343)
+    except Exception as e:
+        print(e)
+        print("connection refused. Most likely busy port.")
         
     text = "Hello World"
     try:
@@ -46,6 +44,8 @@ def recieve(engine):
 
 def send_voice():
     socket = open_socket(4445)
+    print("setting connected")
+    connected = 42
 
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
