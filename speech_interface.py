@@ -14,12 +14,6 @@ import socketio
 sio = socketio.Client()
 
 
-def open_socket(port):
-    sock = socket.socket()         # Create a socket object
-    host = '127.0.0.1' # Get local machine name
-    sock.connect((host, port))
-    return sock
-
 def recieve(engine):
     sleep(3)
     try:
