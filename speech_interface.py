@@ -16,34 +16,34 @@ sio = socketio.Client()
 
 def recieve(engine):
     sleep(3)
-    try:
-        socket = open_socket(4343)
-    except Exception as e:
-        print(e)
-        print("connection refused. Most likely busy port.")
+    # try:
+      #  socket = open_socket(4343)
+    # except Exception as e:
+    #     print(e)
+    #     print("connection refused. Most likely busy port.")
         
-    text = "Hello World"
-    try:
-        while(len(text) > 0):
-            text = socket.recv(2048)
-            if not text:
-                break
-            if(len(text) > 0):
-                if('garbonzo' in text.decode()):
-                    print("closing socket")
-                    socket.close()
-                    break
-                else:
-                    lines = text.decode()
-                    engine.say(lines[5:])
-                    engine.runAndWait()
-    finally:
-        socket.close()
+    # text = "Hello World"
+    # try:
+    #     while(len(text) > 0):
+    #         text = socket.recv(2048)
+    #         if not text:
+    #             break
+    #         if(len(text) > 0):
+    #             if('garbonzo' in text.decode()):
+    #                 print("closing socket")
+    #                 socket.close()
+    #                 break
+    #             else:
+    #                 lines = text.decode()
+    #                 engine.say(lines[5:])
+    #                 engine.runAndWait()
+    # finally:
+    #     socket.close()
 
 def send_voice():
-    socket = open_socket(4445)
-    print("setting connected")
-    connected = 42
+    # socket = open_socket(4445)
+    # print("setting connected")
+    # connected = 42
 
     # Load DeepSpeech model
     if os.path.isdir(ARGS.model):
@@ -94,12 +94,13 @@ def send_voice():
     socket.close()
 
 
-@sio.event(namespace="/speech")
-def speech(sid, data):
-    emit()
-    lines = text.decode()
-    engine.say(lines)
-    engine.runAndWait()
+# @sio.event(namespace="/speech")
+# def speech(sid, data):
+    # pass
+    # emit()
+    # lines = text.decode()
+    # engine.say(lines)
+    # engine.runAndWait()
 
 def emit():
     sio.emit('speech', {"data": 'what we hear'}, namespace='/speech')
@@ -111,13 +112,13 @@ def main(ARGS):
     engine.setProperty('voice', 'english-us') #Voice 16 is us english
 
     # reciever = threading.Thread(target=recieve, args=(engine, ))
-    # sender = threading.Thread(target=send_voice)
+    sender = threading.Thread(target=send_voice)
 
-    # sender.start()
+    sender.start()
     # reciever.start()
 
     # reciever.join()
-    # sender.join()
+    sender.join()
 
     sio.connect("http://localhost:8021/")
 
@@ -146,6 +147,6 @@ if __name__ == '__main__':
                         help="Device input index (Int) as listed by pyaudio.PyAudio.get_device_info_by_index(). If not provided, falls back to PyAudio.get_default_device().")
     parser.add_argument('-r', '--rate', type=int, default=DEFAULT_SAMPLE_RATE,
                         help="Input device sample rate. Default: {DEFAULT_SAMPLE_RATE}. Your device may require 44100.")
-
+    print("Running sppech interface")
     ARGS = parser.parse_args()
     main(ARGS)
